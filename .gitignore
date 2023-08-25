@@ -13,6 +13,7 @@
 # Subdirectoris for compilation
 build
 bin
+b4
 
 # Cube files
 *.cube
