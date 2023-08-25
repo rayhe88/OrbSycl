@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 
     Evaluator evaluator(run.npoints, run.r0);
     timer.start();
-    evaluator.evaluate_sycl(run.orb);
+    evaluator.evaluate(run.orb);
     timer.stop();
 
     std::cout << " Duration: " << timer.getDuration() << " us" << std::endl;
