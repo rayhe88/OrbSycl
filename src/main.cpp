@@ -12,10 +12,11 @@ int main(int argc, char *argv[])
 
     Evaluator evaluator(run.npoints, run.r0);
     timer.start();
-    evaluator.evaluate(run.orb);
+    evaluator.evaluate_sycl(run.orb);
     timer.stop();
 
-    std::cout << " Duration: " << timer.getDuration() << " us" << std::endl;
+    std::cout << " Duration: " << timer.getDuration() << " \u03BC"
+              << "s" << std::endl;
     evaluator.dumpCube(run.name);
 
     exit(EXIT_SUCCESS);
