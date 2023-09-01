@@ -75,20 +75,20 @@ double Functions::orb2sp2(const double r, const double t, const double p)
 
 double Functions::orb2sp3_1(const double r, const double t, const double p)
 {
-    return (0.5 * orb2s(r, t, p) + 0.5 * orb2px(r, t, p) + 0.5 * orb2py(r, t, p) + 0.5 * orb2pz(r, t, p));
+    return 0.5 * (orb2s(r, t, p) + orb2px(r, t, p) + orb2py(r, t, p) + orb2pz(r, t, p));
 }
 
 double Functions::orb2sp3_2(const double r, const double t, const double p)
 {
-    return (0.5 * orb2s(r, t, p) + 0.5 * orb2px(r, t, p) - 0.5 * orb2py(r, t, p) - 0.5 * orb2pz(r, t, p));
+    return 0.5 * (orb2s(r, t, p) + orb2px(r, t, p) - orb2py(r, t, p) - orb2pz(r, t, p));
 }
 
 double Functions::orb2sp3_3(const double r, const double t, const double p)
 {
-    return (0.5 * orb2s(r, t, p) - 0.5 * orb2px(r, t, p) + 0.5 * orb2py(r, t, p) - 0.5 * orb2pz(r, t, p));
+    return 0.5 * (orb2s(r, t, p) - orb2px(r, t, p) + orb2py(r, t, p) - orb2pz(r, t, p));
 }
 
 double Functions::orb2sp3_4(const double r, const double t, const double p)
 {
-    return (0.5 * orb2s(r, t, p) - 0.5 * orb2px(r, t, p) - 0.5 * orb2py(r, t, p) - 0.5 * orb2pz(r, t, p));
+    return 0.5 * (orb2s(r, t, p) - orb2px(r, t, p) - orb2py(r, t, p) + orb2pz(r, t, p));
 }
