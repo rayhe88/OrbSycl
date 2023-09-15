@@ -23,7 +23,7 @@ void runCommands::setNumberPoints(char *argv[])
         }
     }
     if (flag == false)
-        cout << " No number of poitns: default value is charged, 50" << endl;
+        cout << " No number of points: default value is charged, 50" << endl;
 }
 
 void runCommands::setInitialPoint(char *argv[])
