@@ -19,13 +19,14 @@ private:
 
     static void Cart2Sphe(const double[3], double[3]);
     static functionPtr setFunction(char);
+    static double evalFunction(char, const double[3]);
 
 public:
     Evaluator(int, const double);
     ~Evaluator();
-    void evaluate(char choice);
-    void evaluate_sycl(char choice);
-    void dumpCube(std::string name);
+    void evaluate(char);
+    void evaluate_sycl(char);
+    void dumpCube(std::string);
 };
 
 #endif

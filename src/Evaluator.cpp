@@ -23,7 +23,6 @@ Evaluator::~Evaluator()
     r0 = 0;
     step = 0;
     nsize = 0;
-    field.resize(0);
 }
 
 void Evaluator::Cart2Sphe(const double cart[3], double sphe[3])
@@ -61,6 +60,29 @@ functionPtr Evaluator::setFunction(char func)
     }
 }
 
+double Evaluator::evalFunction(char func, const double cart[3])
+{
+    double sphe[3];
+    Cart2Sphe(cart, sphe);
+    switch (func)
+    {
+    case 'p':
+        return Functions::orb3pz(sphe[0], sphe[1], sphe[2]);
+    case 'd':
+        return Functions::orb3dz2(sphe[0], sphe[1], sphe[2]);
+    case '1':
+        return Functions::orb2sp3_1(sphe[0], sphe[1], sphe[2]);
+    case '2':
+        return Functions::orb2sp3_2(sphe[0], sphe[1], sphe[2]);
+    case '3':
+        return Functions::orb2sp3_3(sphe[0], sphe[1], sphe[2]);
+    case '4':
+        return Functions::orb2sp3_4(sphe[0], sphe[1], sphe[2]);
+    default:
+        return Functions::orb3s(sphe[0], sphe[1], sphe[2]);
+    }
+}
+
 void Evaluator::evaluate_sycl(char choice)
 {
 
@@ -76,15 +98,12 @@ void Evaluator::evaluate_sycl(char choice)
     double r_0 = r0;
     double hstep = step;
 
-    functionPtr function = setFunction(choice);
-
     q.submit([&](sycl::handler &h)
              {
                 auto field_acc = field_buff.get_access<sycl::access::mode::write>(h);
 
                 h.parallel_for<class Evaluator2>(sycl::range<1>(nsize_loc), [=](sycl::id<1> idx)
                                  {   double cart[3];
-                                     double sphe[3];
                                      int k = (int)idx % np;
                                      int j = ((int)idx / np) % np;
                                      int i = (int)idx / (np * np);
@@ -93,15 +112,16 @@ void Evaluator::evaluate_sycl(char choice)
                                      cart[1] = r_0 + j * hstep;
                                      cart[2] = r_0 + k * hstep;
 
-                                     Cart2Sphe(cart, sphe);
-
-                                     field_acc[idx] = function(sphe[0], sphe[1], sphe[2]);
+                                     field_acc[idx] = evalFunction(choice, cart);
                                      }); });
     q.wait();
     for (int i = 0; i < nsize_loc; i++)
+    {
         field[i] = field_local[i];
+    }
 
     // delete[] field_local;
+    return;
 }
 
 void Evaluator::evaluate(char choice)
