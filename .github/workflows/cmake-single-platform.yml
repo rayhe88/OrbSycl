@@ -20,38 +20,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout project code
     - uses: actions/checkout@v3
 
-    ###########################3
-    - name: cache install
-      id: cache-install
-      uses: actions/cache@v3
-      with:
-        path: |
-          /opt/intel/oneapi/compiler
-        key: install-${{ env.CACHE_NUMBER }}-${{ env.LINUX_HPCKIT_URL }}-${{ env.LINUX_CPP_COMPONENTS_WEB }}-compiler-${{ hashFiles('**/scripts/cache_exclude_linux.sh') }}
-    - name: install
-      if: steps.cache-install.outputs.cache-hit != 'true'
-      run: scripts/install_linux.sh $LINUX_HPCKIT_URL $LINUX_CPP_COMPONENTS_WEB
-    - name: build
-      run: scripts/build_linux.sh c++ $SAMPLES_TAG
-    - name: exclude unused files from cache
-      if: steps.cache-install.outputs.cache-hit != 'true'
-      run: scripts/cache_exclude_linux.sh
+        - name: Intel Apt repository
+      timeout-minutes: 1
+      run: |
+        wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+        sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+        rm GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
+        echo "deb https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+        sudo apt-get update
+        
+    - name: Install Intel oneAPI compilers
+      timeout-minutes: 5
+      run: sudo apt-get install intel-oneapi-compiler-fortran intel-oneapi-compiler-dpcpp-cpp 
 
-    # Delete the following if you don't want to save install logs
-    - name: Saving install logs
-      if: steps.cache-install.outputs.cache-hit != 'true'
-      uses: actions/upload-artifact@v2
-      with:
-        name: InstallLogs_${{ github.job }}
-        path: |
-          bootstrapper*
-          installer*
-        retention-days: 7
+    # optional
+    - name: Install Intel MPI and MKL
+      timeout-minutes: 5
+      run: intel-oneapi-mpi intel-oneapi-mpi-devel intel-oneapi-mkl
 
-    #- name: Set up Intel OneAPI environment
-    #  run: source /opt/intel/oneapi/setvars.sh 
+    - name: Setup Intel oneAPI environment
+      run: |
+        source /opt/intel/oneapi/setvars.sh
+        printenv >> $GITHUB_ENV
       
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
