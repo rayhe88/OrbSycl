@@ -31,8 +31,8 @@ jobs:
     - name: Install Intel oneAPI compilers
       run: sudo apt-get install intel-oneapi-compiler-fortran intel-oneapi-compiler-dpcpp-cpp 
 
-    - name: Install Intel MKL
-      run: intel-oneapi-mkl
+      #- name: Install Intel MKL
+      #run: intel-oneapi-mkl
       #run: intel-oneapi-mpi intel-oneapi-mpi-devel intel-oneapi-mkl
 
     - name: Setup Intel oneAPI environment
