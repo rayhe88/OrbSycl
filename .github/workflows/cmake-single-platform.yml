@@ -23,7 +23,7 @@ jobs:
     - name: Checkout project code
     - uses: actions/checkout@v3
 
-        - name: Intel Apt repository
+    - name: Intel Apt repository
       timeout-minutes: 1
       run: |
         wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2023.PUB
