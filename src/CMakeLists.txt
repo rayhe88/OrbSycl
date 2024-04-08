@@ -24,7 +24,7 @@ IF (USE_SYCL)
 	ADD_DEFINITIONS (-DCPU_HOST)
     ENDIF ()
 
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /opt/intel/oneapi/compiler/2022.2.1/linux/include/sycl/")
+    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/opt/intel/oneapi/compiler/2024.1/include/sycl")
     message(${CMAKE_CXX_FLAGS})
 ENDIF ()
 
