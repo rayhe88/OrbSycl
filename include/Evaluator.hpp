@@ -26,6 +26,7 @@ public:
     ~Evaluator();
     void evaluate(char);
     void evaluate_sycl(char);
+    void GetPlatform(void);
     void dumpCube(std::string);
 };
 
