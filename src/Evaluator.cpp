@@ -6,8 +6,6 @@
 
 #include <CL/sycl.hpp>
 
-namespace sycl = cl::sycl;
-
 Evaluator::Evaluator(int npts, double _r0)
 {
     npoint = npts;
@@ -83,26 +81,45 @@ double Evaluator::evalFunction(char func, const double cart[3])
     }
 }
 
+void Evaluator::GetPlatform()
+{
+    for( auto platform: cl::sycl::platform::get_platforms())
+    {
+        std::cout << " Platform: "
+        << platform.get_info<cl::sycl::info::platform::name>()
+        << std::endl;
+        for(auto device: platform.get_devices())
+        {
+            std::cout <<"\t Device: "
+            << device.get_info<cl::sycl::info::device::name>() << std::endl;
+        }
+    }
+
+    std::cout << "Out GetPlatform()" << std::endl;
+}
+
 void Evaluator::evaluate_sycl(char choice)
 {
+    GetPlatform();
 
-    sycl::queue q(sycl::default_selector{});
+    //sycl::queue q(sycl::host_selector{});
+    cl::sycl::queue q(cl::sycl::default_selector{});
 
-    std::cout << " Running on " << q.get_device().get_info<sycl::info::device::name>() << "\n\n";
+    std::cout << " Running on " << q.get_device().get_info<cl::sycl::info::device::name>() << "\n\n";
 
     const size_t nsize_loc = nsize;
     double *field_local = new double[nsize_loc];
-    sycl::buffer<double, 1> field_buff(field_local, sycl::range<1>(nsize_loc));
+    cl::sycl::buffer<double, 1> field_buff(field_local, cl::sycl::range<1>(nsize_loc));
 
     int np = npoint;
     double r_0 = r0;
     double hstep = step;
 
-    q.submit([&](sycl::handler &h)
+    q.submit([&](cl::sycl::handler &h)
              {
-                auto field_acc = field_buff.get_access<sycl::access::mode::write>(h);
+                auto field_acc = field_buff.get_access<cl::sycl::access::mode::write>(h);
 
-                h.parallel_for<class Evaluator2>(sycl::range<1>(nsize_loc), [=](sycl::id<1> idx)
+                h.parallel_for<class Evaluator2>(cl::sycl::range<1>(nsize_loc), [=](cl::sycl::id<1> idx)
                                  {   double cart[3];
                                      int k = (int)idx % np;
                                      int j = ((int)idx / np) % np;
