@@ -108,12 +108,12 @@ void Evaluator::evaluate_sycl(char choice)
     std::cout << " Running on " << q.get_device().get_info<cl::sycl::info::device::name>() << "\n\n";
 
     const size_t nsize_loc = nsize;
-    double *field_local = new double[nsize_loc];
-    cl::sycl::buffer<double, 1> field_buff(field_local, cl::sycl::range<1>(nsize_loc));
-
     int np = npoint;
     double r_0 = r0;
     double hstep = step;
+    double *field_local = new double[nsize_loc];
+{
+    cl::sycl::buffer<double, 1> field_buff(field_local, cl::sycl::range<1>(nsize_loc));
 
     q.submit([&](cl::sycl::handler &h)
              {
@@ -132,12 +132,13 @@ void Evaluator::evaluate_sycl(char choice)
                                      field_acc[idx] = evalFunction(choice, cart);
                                      }); });
     q.wait();
+}
     for (int i = 0; i < nsize_loc; i++)
     {
         field[i] = field_local[i];
     }
 
-    // delete[] field_local;
+    delete[] field_local;
     return;
 }
 
